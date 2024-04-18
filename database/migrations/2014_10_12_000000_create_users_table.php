@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('surname');
             $table->string('login')->unique();
-            $table->dateTime('date_of_birth')->nullable();
+            $table->date('date_of_birth')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
