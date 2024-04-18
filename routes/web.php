@@ -24,5 +24,5 @@ Route::middleware(['guest'])->group(function (){
 });
 Route::prefix('/user')->group(function (){
     Route::resource('events', \App\Http\Controllers\EventController::class);
-});
+})->middleware('auth');
 Route::get('logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout')->middleware('auth');
