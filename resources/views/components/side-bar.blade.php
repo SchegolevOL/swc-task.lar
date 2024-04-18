@@ -30,7 +30,7 @@
                     </li>
                 @endforeach
                 <li class="nav-header">CREATED EVENTS
-                    <a href="" class="btn-primary">Created</a>
+                    <a href="{{route('events.create')}}" class="btn-primary">Created</a>
                 </li>
                 @foreach($events_created as $event)
                     <li class="nav-item">

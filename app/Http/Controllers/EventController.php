@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +27,8 @@ class EventController extends Controller
      */
     public function create()
     {
-        //
+        $users = User::query()->get();
+        return view('user.event-create', compact('users'));
     }
 
     /**
@@ -34,7 +36,17 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'heading'=>'required',
+            'text'=>'required',
+        ]);
+        $event = Event::query()->create([
+            'heading'=>$request->heading,
+            'text'=>$request->text,
+            'user_id'=>Auth::user()->id,
+        ]);
+        $event->participants()->sync($request->listeners);
+        return redirect()->route('events.index');
     }
 
     /**

@@ -31,7 +31,7 @@ class AuthController extends Controller
             'login'=>'required|unique:users',
             'password'=>'required|confirmed',
         ]);
-        //dd($request->all());
+
         $user = User::query()->create([
             'name'=>$request->name,
             'surname'=>$request->surname,
