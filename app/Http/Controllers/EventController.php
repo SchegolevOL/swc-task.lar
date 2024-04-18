@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class EventController extends Controller
 {
@@ -14,12 +15,34 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::query()->get();
-        $user = Auth::user();
-        $events_parteicipation = $user->events_parteicipation();
-        $events_created=$user->events_created;
+            $user=Auth::user();
 
-        return view('user.index', compact('events', 'events_created', 'events_parteicipation'));
+
+
+        if (Cache::has('events')){
+            $events = Cache::get('events');
+        }else{
+            $events = Event::query()->get();
+            Cache::put('events', $events, 1800);
+        }
+
+        if (Cache::has('events_created')){
+            $events_created = Cache::get('events_created');
+        }else{
+
+
+            $events_created=$user->events_created;
+            Cache::put('events_created', $events_created, 1800);
+        }
+
+
+
+
+
+
+
+
+        return view('user.index', compact('events', 'events_created'));
     }
 
     /**
@@ -28,6 +51,7 @@ class EventController extends Controller
     public function create()
     {
         $users = User::query()->get();
+
         return view('user.event-create', compact('users'));
     }
 
@@ -46,6 +70,8 @@ class EventController extends Controller
             'user_id'=>Auth::user()->id,
         ]);
         $event->participants()->sync($request->listeners);
+        Cache::delete('event');
+        Cache::delete('events_created');
         return redirect()->route('events.index');
     }
 
@@ -54,13 +80,50 @@ class EventController extends Controller
      */
     public function show(string $id)
     {
-        $event_select = Event::query()->find($id);
-        $events = Event::query()->get();
-        $user = Auth::user();
-        $events_parteicipation = $user->events_parteicipation();
-        $events_created=$user->events_created;
+        $user=Auth::user();
 
-        return view('user.index', compact('events', 'events_created', 'events_parteicipation', 'event_select'));
+        if (Cache::has('events')){
+            $events = Cache::get('events');
+
+        }else{
+            $events = Event::query()->get();
+
+            Cache::put('events', $events, 1800);
+        }
+
+        if (Cache::has('events_created')){
+            $events_created = Cache::get('events_created');
+
+        }else{
+            $events_created=$user->events_created;
+            Cache::put('events_created', $events_created, 1800);
+        }
+
+
+
+        foreach ($events as $event){
+
+            if ($event->id == $id){
+                $event_select = $event;
+
+                break;
+            }
+        }
+
+        /*if (Cache::has('participants')){
+            $participants = Cache::get('participants');
+
+        }else{*/
+            $participants=$event_select->participants;
+            Cache::put('participants', $participants, 1800);
+
+
+
+
+
+
+
+        return view('user.index', compact('events', 'events_created',  'event_select', 'participants'));
     }
 
     /**
@@ -87,6 +150,8 @@ class EventController extends Controller
         $event = Event::query()->find($id);
         $event->participants()->sync([]);
         $event->delete();
+        Cache::pull('event');
+        Cache::pull('events_created');
         return redirect()->route('events.index');
     }
 }

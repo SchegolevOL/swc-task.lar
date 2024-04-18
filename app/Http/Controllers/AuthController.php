@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -42,6 +43,7 @@ class AuthController extends Controller
 
         session()->flash('success', 'You have successfully registered');
         Auth::login($user);
+        Cache::get('user', Auth::user());
         return redirect('/');
     }
     public function loginForm()
@@ -55,13 +57,16 @@ class AuthController extends Controller
             'password'=>'required',
         ]);
         if (Auth::attempt(['login'=>$request->login, 'password'=>$request->password])){
-            return redirect('/');
+            Cache::get('user', Auth::user());
+            return redirect()->route('events.index');
         }
+
         return redirect()->back()->with('error', 'The email or password was entered incorrectly');
 
     }
     public function logout()
     {
+        Cache::delete('user');
         Auth::logout();
         return redirect()->route('loginForm');
     }

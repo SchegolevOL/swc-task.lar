@@ -20,6 +20,11 @@
                     <p class="card-text">
                         {{$event_select->text}}
                     </p>
+                    @foreach($participants as $participant)
+                        <div>{{$participant->name}}</div>
+                    @endforeach
+
+
 
                     @if($event_select->user_id == \Illuminate\Support\Facades\Auth::user()->id)
                         <form action="{{route('events.destroy', ['event'=>$event_select->id])}}" method="post">
@@ -30,7 +35,7 @@
                     @endif
 
 
-                    <a href="#" class="card-link">Another link</a>
+                    <a href="#" class="card-link">Join</a>
                 </div>
             </div>
 

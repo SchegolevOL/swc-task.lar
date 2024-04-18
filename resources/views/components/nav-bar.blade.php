@@ -62,11 +62,11 @@
         <!-- Right navbar links -->
         <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
 
-            <li class="nav-item dropdown">
+            {{--<li class="nav-item dropdown">
                 <a href="" class="nav-link">Register</a>
-            </li>
+            </li>--}}
             <li class="nav-item dropdown">
-                <a href="" class="nav-link">Logout</a>
+                <a href="{{route('logout')}}" class="nav-link">Logout</a>
             </li>
 
         </ul>
