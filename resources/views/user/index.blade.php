@@ -21,7 +21,15 @@
                         {{$event_select->text}}
                     </p>
 
-                    <a href="#" class="card-link">Card link</a>
+                    @if($event_select->user_id == \Illuminate\Support\Facades\Auth::user()->id)
+                        <form action="{{route('events.destroy', ['event'=>$event_select->id])}}" method="post">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn bg-danger">Delete</button>
+                        </form>
+                    @endif
+
+
                     <a href="#" class="card-link">Another link</a>
                 </div>
             </div>
