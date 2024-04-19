@@ -116,14 +116,21 @@ class EventController extends Controller
         }else{*/
             $participants=$event_select->participants;
             Cache::put('participants', $participants, 1800);
+        $is_participant = false;
+        foreach ($participants as $participant){
+            if ($participant->id == $user->id)
+            {
+                $is_participant=true;
+
+                break;
+            }
+        }
 
 
 
 
 
-
-
-        return view('user.index', compact('events', 'events_created',  'event_select', 'participants'));
+        return view('user.index', compact('events', 'events_created',  'event_select', 'participants', 'is_participant'));
     }
 
     /**
@@ -139,7 +146,27 @@ class EventController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $event = Event::query()->find($id);
+
+        $user = Auth::user();
+        $participants=$event->participants;
+
+
+        if ($request->is_participant) {
+            $participants->push($user);
+        }else{
+            for ($i = 0; $i < $participants->count(); $i++) {
+                if ($participants[$i]->id == $user->id){
+                    $participants->pull($i);
+
+                }
+            }
+        }
+        $event = Event::query()->find($id);
+        $event->participants()->sync($participants);
+        return redirect()->route('events.index');
+
+
     }
 
     /**
