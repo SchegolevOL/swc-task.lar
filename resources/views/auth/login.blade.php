@@ -40,7 +40,7 @@
 
 
 
-                    <a href="login.html" class="text-center">Register</a>
+                    <a href="{{route('register.create')}}" class="text-center">Register</a>
                 </div>
                 <!-- /.form-box -->
             </div><!-- /.card -->

@@ -71,7 +71,7 @@
 
 
 
-                <a href="login.html" class="text-center">Login</a>
+                <a href="{{route('loginForm')}}" class="text-center">Login</a>
             </div>
             <!-- /.form-box -->
         </div><!-- /.card -->
