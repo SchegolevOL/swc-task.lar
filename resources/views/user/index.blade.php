@@ -26,7 +26,7 @@
 
 
 
-                            @if($event_select->user_id == \Illuminate\Support\Facades\Auth::user()->id)
+                            @if($event_select->user_id == $user->id)
                                 <form action="{{route('events.destroy', ['event'=>$event_select->id])}}" method="post">
                                     @csrf
                                     @method('DELETE')

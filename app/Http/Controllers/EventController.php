@@ -15,34 +15,10 @@ class EventController extends Controller
      */
     public function index()
     {
-            $user=Auth::user();
-
-
-
-        if (Cache::has('events')){
-            $events = Cache::get('events');
-        }else{
-            $events = Event::query()->get();
-            Cache::put('events', $events, 1800);
-        }
-
-        if (Cache::has('events_created')){
-            $events_created = Cache::get('events_created');
-        }else{
-
-
-            $events_created=$user->events_created;
-            Cache::put('events_created', $events_created, 1800);
-        }
-
-
-
-
-
-
-
-
-        return view('user.index', compact('events', 'events_created'));
+        $user = $this->getUserAuth();
+        $events = $this->getEvents();
+        $events_created = $this->getEeventsCreated($user);
+        return view('user.index', compact('events', 'events_created', 'user'));
     }
 
     /**
@@ -80,25 +56,9 @@ class EventController extends Controller
      */
     public function show(string $id)
     {
-        $user=Auth::user();
-
-        if (Cache::has('events')){
-            $events = Cache::get('events');
-
-        }else{
-            $events = Event::query()->get();
-
-            Cache::put('events', $events, 1800);
-        }
-
-        if (Cache::has('events_created')){
-            $events_created = Cache::get('events_created');
-
-        }else{
-            $events_created=$user->events_created;
-            Cache::put('events_created', $events_created, 1800);
-        }
-
+        $user = $this->getUserAuth();
+        $events = $this->getEvents();
+        $events_created = $this->getEeventsCreated($user);
 
 
         foreach ($events as $event){
@@ -110,10 +70,6 @@ class EventController extends Controller
             }
         }
 
-        /*if (Cache::has('participants')){
-            $participants = Cache::get('participants');
-
-        }else{*/
             $participants=$event_select->participants;
             Cache::put('participants', $participants, 1800);
         $is_participant = false;
@@ -130,7 +86,7 @@ class EventController extends Controller
 
 
 
-        return view('user.index', compact('events', 'events_created',  'event_select', 'participants', 'is_participant'));
+        return view('user.index', compact('events', 'events_created',  'event_select', 'participants', 'is_participant', 'user'));
     }
 
     /**
@@ -180,5 +136,40 @@ class EventController extends Controller
         Cache::pull('event');
         Cache::pull('events_created');
         return redirect()->route('events.index');
+    }
+
+
+    private function getUserAuth(){
+        if (Cache::has('user')){
+            $user=Cache::get('user');
+
+        }else{
+            $user=Auth::user();
+            Cache::put('user', $user);
+
+        }
+        return $user;
+    }
+
+    private function getEvents()
+    {
+        if (Cache::has('events')){
+            $events = Cache::get('events');
+        }else{
+            $events = Event::query()->get();
+            Cache::put('events', $events, 1800);
+        }
+        return $events;
+    }
+
+
+    private function getEeventsCreated($user){
+        if (Cache::has('events_created')){
+            $events_created = Cache::get('events_created');
+        }else{
+            $events_created=$user->events_created;
+            Cache::put('events_created', $events_created, 1800);
+        }
+        return $events_created;
     }
 }
