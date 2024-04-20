@@ -15,7 +15,8 @@ class EventController extends Controller
      */
     public function index()
     {
-        $user = $this->getUserAuth();
+
+        $user=Auth::user();
         $events = $this->getEvents();
         $events_created = $this->getEeventsCreated($user);
         return view('user.index', compact('events', 'events_created', 'user'));
@@ -56,7 +57,8 @@ class EventController extends Controller
      */
     public function show(string $id)
     {
-        $user = $this->getUserAuth();
+        $user=Auth::user();
+
         $events = $this->getEvents();
         $events_created = $this->getEeventsCreated($user);
 
@@ -139,17 +141,7 @@ class EventController extends Controller
     }
 
 
-    private function getUserAuth(){
-        if (Cache::has('user')){
-            $user=Cache::get('user');
 
-        }else{
-            $user=Auth::user();
-            Cache::put('user', $user);
-
-        }
-        return $user;
-    }
 
     private function getEvents()
     {
