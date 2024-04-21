@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\Cache;
 
 class EventController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
 
@@ -88,7 +86,7 @@ class EventController extends Controller
 
 
 
-        return view('user.index', compact('events', 'events_created',  'event_select', 'participants', 'is_participant', 'user'));
+        return view('user.index', compact('events', 'events_created',  'event_select', 'participants', 'is_participant'));
     }
 
     /**
@@ -122,14 +120,14 @@ class EventController extends Controller
         }
         $event = Event::query()->find($id);
         $event->participants()->sync($participants);
-        return redirect()->route('events.index');
+        return redirect()->back();
 
 
     }
 
     /**
-     * Remove the specified resource from storage.
-     */
+     * Remove the specified resource from storage.0
+ 0     */
     public function destroy(string $id)
     {
         $event = Event::query()->find($id);
@@ -148,9 +146,10 @@ class EventController extends Controller
         if (Cache::has('events')){
             $events = Cache::get('events');
         }else{
-            $events = Event::query()->get();
+            $events = Event::query()->select('id','heading')->get();
             Cache::put('events', $events, 1800);
         }
+        dump($events);
         return $events;
     }
 
@@ -160,8 +159,14 @@ class EventController extends Controller
             $events_created = Cache::get('events_created');
         }else{
             $events_created=$user->events_created;
+
             Cache::put('events_created', $events_created, 1800);
         }
+
         return $events_created;
     }
+
+
+
+
 }

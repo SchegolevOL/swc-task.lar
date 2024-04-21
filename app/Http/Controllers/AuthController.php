@@ -66,7 +66,9 @@ class AuthController extends Controller
     }
     public function logout()
     {
-        Cache::delete('user');
+        Cache::delete('events');
+        Cache::delete('events_created');
+
         Auth::logout();
         return redirect()->route('loginForm');
     }
