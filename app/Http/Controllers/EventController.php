@@ -146,7 +146,7 @@ class EventController extends Controller
         if (Cache::has('events')){
             $events = Cache::get('events');
         }else{
-            $events = Event::query()->select('id','heading')->get();
+            $events = Event::query()->select('id','heading','text')->get();
             Cache::put('events', $events, 1800);
         }
         dump($events);
